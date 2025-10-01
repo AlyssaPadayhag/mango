@@ -2,6 +2,7 @@ const express = require("express");
 const mysql2 = require("mysql2")
 const bodyParser = require("body-parser")
 const dns = require('node:dns');
+const dotenv = require("dotenv").config()
 const doIP = dns.lookup('db-mysql-nyc3-75731-do-user-15577760-0.f.db.ondigitalocean.com', (err) => console.log(err || 'node can access the internet'));
 
 
@@ -11,11 +12,11 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 //MySQL Connection
 const db = mysql2.createConnection({
-    host: "161.35.139.85",
-    user: "doadmin",
-    password: "AVNS_OKoKruq5psqh45sxZKf",
-    database: "defaultdb",
-    port: 25060
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB,
+    port: process.env.DB_PORT
 });
 // Connect to MySQL
 db.connect((err) => {
@@ -30,7 +31,7 @@ app.get("/api/movies", (req, res) => {
     db.query("SELECT * FROM movies", (err, results) => {
         if (err) {
             console.error("Error executing query: " + err.stack);
-            res.status(500).send("Error fetching users");
+            res.status(500).send("Error fetching movies");
             return;
         }
         res.json(results);
